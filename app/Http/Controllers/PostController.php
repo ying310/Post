@@ -17,24 +17,24 @@ class PostController extends Controller
         $this->middleware('auth');
     }
 
-    public function index()
-    {
-        $user = User::where('id', auth()->id())->first();
-        $follow = $user->follows->pluck('id');
-        $follow = $follow->push(auth()->id());
-        $posts = Post::whereIn('user_id', $follow)->latest()->get();
-        return view('post.index', ['posts' => $posts]);
-    }
+    // public function index()
+    // {
+    //     $user = User::where('id', auth()->id())->first();
+    //     $follow = $user->follows->pluck('id');
+    //     $follow = $follow->push(auth()->id());
+    //     $posts = Post::whereIn('user_id', $follow)->latest()->get();
+    //     return view('post.index', ['posts' => $posts]);
+    // }
 
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        //
-    }
+    // public function create()
+    // {
+    //     //
+    // }
 
     /**
      * Store a newly created resource in storage.
@@ -44,7 +44,7 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
     }
 
     /**

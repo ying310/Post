@@ -18,4 +18,4 @@ Route::get('/', 'FirstController@index');
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::resource('post', 'PostController')->except(['index']);
+Route::resource('post', 'PostController')->except(['index', 'create']);

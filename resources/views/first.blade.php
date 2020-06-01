@@ -18,7 +18,7 @@
                       </tr>
                       <tr>
                         <td colspan="2" style="text-align:right">
-                          <button>送出</button>
+                          <button id="send_btn">送出</button>
                         </td>
                       </tr>
                   </table>
@@ -52,4 +52,5 @@
         </div>
     </div>
 </div>
+
 @endsection

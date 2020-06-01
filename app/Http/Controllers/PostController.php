@@ -44,7 +44,9 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        
+          if($request->ajax()){
+              echo $request->input('title') . ' ' . $request->input('content'). '!';
+          }
     }
 
     /**

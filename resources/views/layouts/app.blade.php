@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- CSRF Token -->
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
@@ -18,6 +18,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
       .m-b-md {
           margin-bottom: 30px;
@@ -91,5 +92,25 @@
             @yield('content')
         </main>
     </div>
+    <script>
+
+    $(document).ready(function(){
+        $.ajaxSetup({
+          headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          }
+        });
+        $("#send_btn").click(function(){
+            $.ajax({
+                url: "/post",
+                type: "POST",
+                data: {title: $('input[name="title"]').val(), content: $('textarea[name="content"]').val()},
+                success: function(data){
+                    alert(data);
+                },
+            });
+        });
+    });
+    </script>
 </body>
 </html>

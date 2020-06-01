@@ -9,8 +9,16 @@
 
                 <div class="card-body">
                     @forelse($posts as $post)
-                      <div>$post->title</div>
-                      <div>$post->content</div>
+                      <div style="border-bottom: 1px solid lightblue; margin: 10px; padding: 14px 16px">
+                        <div>
+                          <h3>{{$post->title}}</h3>
+                        </div>
+                        <br>
+                        <div>
+                          <p>{{$post->content}}</p>
+                        </div>
+                      </div>
+                      <br>
                     @empty
                       <div>沒有文章</div>
                     @endforelse

@@ -45,7 +45,15 @@ class PostController extends Controller
     public function store(Request $request)
     {
           if($request->ajax()){
-              echo $request->input('title') . ' ' . $request->input('content'). '!';
+              $request->validate([
+                'title' => 'required|max:50',
+                'content' => 'required|max:255',
+              ]);
+              $input = $request->all();
+              $user_id = auth()->id();
+              $input['user_id'] = $user_id;
+              $post = Post::create($input);
+              return response($post);
           }
     }
 

@@ -13,11 +13,11 @@
                     </ul>
                       <tr>
                         <td style="text-align:center; width:25%;padding: 10px">Title</td>
-                        <td style="width:75%;"><input type="text" name="title" size= "60" autoComplete="Off" placeholder="請輸入標題"></td>
+                        <td style="width:75%;"><input id="create_title" type="text" name="title" size= "60" autoComplete="Off" placeholder="請輸入標題"></td>
                       </tr>
                       <tr>
                         <td style="text-align:center">Content</td>
-                        <td><textarea name="content" cols="60" rows="7" style="resize:none" placeholder="請輸入內容"></textarea></td>
+                        <td><textarea id="create_content" name="content" cols="60" rows="7" style="resize:none" placeholder="請輸入內容"></textarea></td>
                       </tr>
                       <tr>
                         <td colspan="2" style="text-align:right">
@@ -31,9 +31,13 @@
                 <div class="card-body">
                     @forelse($posts as $post)
                     <div style="border-bottom: 1px solid lightblue; margin: 10px; padding: 14px 16px">
-                      <div>
-                          <h3>{{$post->title}}</h3>
+                      <div style="float:right">
+                          <h5><a href="#">{{$post->user->name}}</a></h5>
                       </div>
+                      <div>
+                          <h3><a href="/post/{{$post->id}}">{{$post->title}}</a></h3>
+                      </div>
+
                       <br>
                       <div>
                           <p>{{$post->content}}</p>
@@ -55,5 +59,39 @@
         </div>
     </div>
 </div>
+<script>
 
+$(document).ready(function(){
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+    $("#send_btn").click(function(){
+        $.ajax({
+            url: "/post",
+            type: "POST",
+            data: {title: $('input[name="title"]').val(), content: $('textarea[name="content"]').val()},
+            success: function(data){
+                $('.response').html('');
+                $('.response').append('<li style="color:red">Success</li>');
+                $('.card-body').prepend('<div style="border-bottom: 1px solid lightblue; margin: 10px; padding: 14px 16px"><div><h3>' + data.title + '</h3></div><br>' +
+                    '<div><p>' + data.content + '</p></div>'
+                );
+                $('#create_title').val('');
+                $('#create_content').val('');
+            },
+            error: function(xhr){
+                if(xhr.status == 422){
+                        $('.response').html('');
+                    $.each(xhr.responseJSON.errors, function(key, value){
+
+                        $('.response').append('<li style="color: red">'+value+'</li>');
+                    });
+                }
+            }
+        });
+    });
+});
+</script>
 @endsection

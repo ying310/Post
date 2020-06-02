@@ -92,38 +92,5 @@
             @yield('content')
         </main>
     </div>
-    <script>
-
-    $(document).ready(function(){
-        $.ajaxSetup({
-          headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-          }
-        });
-        $("#send_btn").click(function(){
-            $.ajax({
-                url: "/post",
-                type: "POST",
-                data: {title: $('input[name="title"]').val(), content: $('textarea[name="content"]').val()},
-                success: function(data){
-                    $('.response').html('');
-                    $('.response').append('<li style="color:red">Success</li>');
-                    $('.card-body').prepend('<div style="border-bottom: 1px solid lightblue; margin: 10px; padding: 14px 16px"><div><h3>' + data.title + '</h3></div><br>' +
-                        '<div><p>' + data.content + '</p></div>'
-                    );
-                },
-                error: function(xhr){
-                    if(xhr.status == 422){
-                            $('.response').html('');
-                        $.each(xhr.responseJSON.errors, function(key, value){
-
-                            $('.response').append('<li style="color: red">'+value+'</li>');
-                        });
-                    }
-                }
-            });
-        });
-    });
-    </script>
 </body>
 </html>

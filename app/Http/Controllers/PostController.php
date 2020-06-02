@@ -53,7 +53,7 @@ class PostController extends Controller
               $user_id = auth()->id();
               $input['user_id'] = $user_id;
               $post = Post::create($input);
-              return response($post);
+              return $post;
           }
     }
 
@@ -65,7 +65,8 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        //
+        $post = Post::with('user:id,name')->findOrFail($id);
+        return view('post.show', ['post' => $post]);
     }
 
     /**
@@ -76,7 +77,8 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        //
+        $post = Post::findOrFail($id);
+        return view('post.edit', ['post' => $post]);
     }
 
     /**
@@ -88,7 +90,13 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'title' => 'required|max:50',
+            'content' => 'required|max:255',
+        ]);
+        $post = Post::findOrFail($id);
+        $post->update($request->all());
+        return redirect('/post/'.$id);
     }
 
     /**
@@ -99,6 +107,8 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $post = Post::findOrFail($id);
+        $post->delete();
+        return redirect('/');
     }
 }

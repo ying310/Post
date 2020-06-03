@@ -32,7 +32,7 @@
                     @forelse($posts as $post)
                     <div style="border-bottom: 1px solid lightblue; margin: 10px; padding: 14px 16px">
                       <div style="float:right">
-                          <h5><a href="#">{{$post->user->name}}</a></h5>
+                          <h5><a href="/profile/{{$post->user_id}}">{{$post->user->name}}</a></h5>
                       </div>
                       <div>
                           <h3><a href="/post/{{$post->id}}">{{$post->title}}</a></h3>

@@ -78,7 +78,11 @@ class PostController extends Controller
     public function edit($id)
     {
         $post = Post::findOrFail($id);
-        return view('post.edit', ['post' => $post]);
+        if(auth()->user()->can('update', $post)){
+          return view('post.edit', ['post' => $post]);
+        }else{
+          abort(403,'抱歉你沒有權限更改');
+        }
     }
 
     /**
@@ -90,13 +94,17 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'title' => 'required|max:50',
-            'content' => 'required|max:255',
-        ]);
         $post = Post::findOrFail($id);
-        $post->update($request->all());
-        return redirect('/post/'.$id);
+        if(auth()->user()->can('update', $post)){
+          $request->validate([
+              'title' => 'required|max:50',
+              'content' => 'required|max:255',
+          ]);
+          $post->update($request->all());
+          return redirect('/post/'.$id);
+        }else{
+          return abort(403, '抱歉你沒有權限更改');
+        }
     }
 
     /**
@@ -107,8 +115,10 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        $post = Post::findOrFail($id);
+      $post = Post::findOrFail($id);
+      if(auth()->user()->can('delete', $post)){
         $post->delete();
         return redirect('/');
+      }
     }
 }

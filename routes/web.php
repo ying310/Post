@@ -17,5 +17,5 @@ Route::get('/', 'FirstController@index');
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/profile/{id}', 'ProfileController@index')->name('profile');
 Route::resource('post', 'PostController')->except(['index', 'create']);

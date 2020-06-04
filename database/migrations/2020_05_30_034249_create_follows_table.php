@@ -17,6 +17,7 @@ class CreateFollowsTable extends Migration
             $table->primary(['user_id', 'following_user_id']);
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('following_user_id');
+            $table->integer('is_check')->default(0);
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

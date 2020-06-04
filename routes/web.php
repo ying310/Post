@@ -19,3 +19,4 @@ Auth::routes();
 
 Route::get('/profile/{id}', 'ProfileController@index')->name('profile');
 Route::resource('post', 'PostController')->except(['index', 'create']);
+Route::post('/follow/{id}', 'FollowController@follow')->name('follow');

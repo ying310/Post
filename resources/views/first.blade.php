@@ -6,6 +6,10 @@
         <div class="col-md-8">
           @auth
             <div class="card">
+              <div class="card-header">
+                <input type="text" name="search" autocomplete="off" style="border: 1px solid lightblue; border-radius: 20px;outline-style: none ;padding:5px 5px 5px 20px" placeholder="搜尋">
+                <a href="" style="font-size: 17px">搜尋</a>
+              </div>
               <div>
                   <table style="width:100%">
                     <ul class='response'>

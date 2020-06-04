@@ -13,7 +13,7 @@
                         </div>
                       @endcan
                       <div style="margin-bottom: 15px">
-                          <h5><a href="#">{{$post->user->name}}</a></h5>
+                          <h5><a href="/profile/{{$post->user->id}}">{{$post->user->name}}</a></h5>
                       </div>
                       <div>
                           <h3 style="margin-left: 15px">{{$post->title}}</h3>

@@ -3,7 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-
+use App\User;
 class Follow extends Model
 {
     protected $table = 'follows';
@@ -13,5 +13,7 @@ class Follow extends Model
       'following_user_id',
     ];
 
-
+    public function user(){
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
 }

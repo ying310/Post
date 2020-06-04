@@ -16,14 +16,14 @@ class ProfilePolicy
      * @param  \App\User  $user
      * @return mixed
      */
-    public function viewAny(User $user)
+    public function viewAny(User $user ,User $model)
     {
         if($user->id === $model->id){
           return true;
         }else{
           $follow = Follow::where('user_id', $user->id)
           ->where('following_user_id', $model->id)
-          ->where('is_check', 1);
+          ->where('is_check', 1)
           ->first();
           return $follow;
         }

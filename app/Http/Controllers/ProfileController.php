@@ -20,6 +20,7 @@ class ProfileController extends Controller
         $user = User::find($id);
         $following = Follow::where('user_id', $id)->get();
         $follow_by = Follow::where('following_user_id', $id)->get();
-        return view('profile', ['posts' => $posts, 'user' => $user, 'following' => $following, 'follow_by' => $follow_by]);
+        $follows = Follow::with('user')->where('following_user_id', auth()->id())->where('is_check', 0)->get();
+        return view('profile', ['posts' => $posts, 'user' => $user, 'following' => $following, 'follow_by' => $follow_by, 'follows' => $follows]);
     }
 }

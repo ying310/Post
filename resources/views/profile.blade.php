@@ -5,17 +5,26 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
+                @if(auth()->id() == $user->id)
+                  @forelse($follows as $follow)
+                    <div>
+                      <a href="/profile/{{$follow->user->id}}">{{$follow->user->name}}</a>
+                      想要追蹤你
+                    </div>
+                  @empty
+                  @endforelse
+                @endif
                 <div class="card-header">
                     <div>個人資料
                       @if(auth()->id() != $user->id)
-                      @can('viewAny', $user)
+                      @if(Auth::user()->can('viewAny', $user))
                       <button class="follow_btn" style="float:right; background: lightgreen; border:none; border-radius: 10px;color:white; outline-style:none" value=-1>已追蹤</button>
-                      @elsecan('view', $user)
-                      <button class="follow_btn" style="float:right; background: orange; border:none; border-radius: 10px;color:white; outline-style:none" value=0>等待確認</button>
-                      @endcan
-                      @cannot('viewAny', $user)
+                      @elseif(Auth::user()->can('view', $user))
+                      <button class="follow_btn" style="float:right; background: orange; border:none; border-radius: 10px;color:white; outline-style:none" value=-1>等待確認</button>
+                      @else
                       <button class="follow_btn" style="float:right; background: dodgerblue; border:none; border-radius: 10px;color:white; outline-style:none" value=1>追蹤對方</button>
-                      @endcannot
+                      @endif
+                      @endif
                     </div>
                 </div>
                 <div class="card-body">
@@ -71,7 +80,7 @@
                 </div>
                 @else
                 <div class="card-body">
-                  <h3 style="text-align:center; padding:30px">為私人帳號</h3>
+                  <h3 style="text-align:center; padding:5px">為私人帳號</h3>
                 </div>
                 @endcan
             </div>

@@ -48,9 +48,9 @@
                           <th style="font-size: 30px; padding:5px; width: 120px;text-align:center">粉絲</th>
                         </tr>
                         <tr>
-                          <td  style="font-size: 30px; padding:5px; width: 120px;text-align:center">{{count($posts)}}</td>
-                          <td  style="font-size: 30px; padding:5px; width: 120px;text-align:center">{{count($following)}}</td>
-                          <td  style="font-size: 30px; padding:5px; width: 120px;text-align:center">{{count($follow_by)}}</td>
+                          <td  style="font-size: 30px; padding:5px; width: 120px;text-align:center">{{count($user->post)}}</td>
+                          <td  style="font-size: 30px; padding:5px; width: 120px;text-align:center"><a href="javascript:void({{$user->follows_count==0 ? 0 : 'getFollow(1)'}})" style="@if($user->follows_count == 0)cursor: default; color:black; text-decoration:none @endif">{{$user->follows_count}}</a></td>
+                          <td  style="font-size: 30px; padding:5px; width: 120px;text-align:center"><a href="javascript:void({{$user->follow_by_count==0 ? 0 : 'getFollow(-1)'}})" style="@if($user->follow_by_count == 0)cursor: default; color:black; text-decoration:none @endif">{{$user->follow_by_count}}</a></td>
                         </tr>
                       </table>
                   </div>
@@ -58,7 +58,7 @@
                 <div class="card-header">文章</div>
                 @can('viewAny', $user)
                 <div class="card-body">
-                    @forelse($posts as $post)
+                    @forelse($user->post as $post)
                       <div style="border-bottom: 1px solid lightblue; margin: 10px; padding: 14px 16px">
                         @can('update', $post)
                         <div style="float:right">
@@ -88,32 +88,73 @@
     </div>
 </div>
 
+<div id="dialog_div">
+  <div id="content">
+123
+  </div>
+</div>
 <script>
-$(document).ready(function(){
+
+$(function(){
     $.ajaxSetup({
-        'headers':{
+       'headers':{
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
     });
 
+    $("#dialog_div").dialog({
+      autoOpen:false,
+      draggable: false,
+      modal:true,
+      closeOnEscape:false,
+      open:function(event,ui){$('.ui-dialog-titlebar-close').hide();},
+      buttons: {
+        'close': function(){ $(this).dialog('close')}
+      }
+    });
     $('.follow_btn').click(function(){
-        $.ajax({
-            url: "{{route('follow', $user->id)}}",
-            type: "POST",
-            data: {follow_value: $('.follow_btn').val()},
-            success: function(data){
-                if(data == 0){
-                    $('.follow_btn').html('等待確認');
-                    $('.follow_btn').css('background', 'orange');
-                    $('.follow_btn').val(-1);
-                }else if(data == 1){
-                    $('.follow_btn').html('追蹤對方');
-                    $('.follow_btn').css('background', '#00bfff');
-                    $('.follow_btn').val(1);
-                }
-            }
-        });
+      $.ajax({
+          url: "{{route('follow', $user->id)}}",
+          type: "POST",
+          data: {follow_value: $('.follow_btn').val()},
+          success: function(data){
+              if(data == 0){
+                  $('.follow_btn').html('等待確認');
+                  $('.follow_btn').css('background', 'orange');
+                  $('.follow_btn').val(-1);
+              }else if(data == 1){
+                  $('.follow_btn').html('追蹤對方');
+                  $('.follow_btn').css('background', '#00bfff');
+                  $('.follow_btn').val(1);
+              }
+          }
+      });
     });
 });
+function getFollow(value){
+   $(function(){
+     let title = "追蹤";
+     if(value == -1){
+       title = "粉絲";
+     }
+     $('#dialog_div').dialog({title: title});
+     $.ajaxSetup({
+        'headers':{
+             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+         }
+     });
+      $.ajax({
+        url: "{{route('getFollow', $user->id)}}",
+        type: "POST",
+        data: {value:value},
+        success: function(data){
+            $('#content').html(data);
+            $('#dialog_div').dialog('open');
+        },
+      });
+   });
+}
+
 </script>
+
 @endsection

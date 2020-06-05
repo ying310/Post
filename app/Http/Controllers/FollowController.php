@@ -22,6 +22,29 @@ class FollowController extends Controller
                 return 1;
             }
         }
+    }
 
+    public function getFollow(Request $request, $id){
+        if($request->ajax()){
+            $input = $request->input('value');
+            if($input == 1){
+                $follows = Follow::with('follow_user')->where('user_id', $id)->where('is_check', 1)->get();
+                $output = "<table>";
+                foreach($follows as $follow){
+                    $output = $output . "<tr><td><a href='/profile/".$follow->follow_user->id."'>" . $follow->follow_user->name . "</a></td></tr>";
+                }
+                $output = $output . "</table>";
+                echo $output;
+            }elseif($input == -1){
+                $follows = Follow::with('user')->where('following_user_id', $id)->where('is_check', 1)->get();
+                $output = "<table>";
+                foreach($follows as $follow){
+                    $output = $output . "<tr><td><a href='/profile/".$follow->user->id."'>" . $follow->user->name . "</a></td></tr>";
+                }
+                $output = $output . "</table>";
+                echo $output;
+            }
+
+        }
     }
 }

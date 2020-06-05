@@ -11,16 +11,18 @@ class ProfileController extends Controller
 {
 
     public function __construct(){
-        $this->middleware('auth');
+        // $this->middleware('auth');
     }
 
     public function index($id)
     {
-        $posts = Post::where('user_id', $id)->get();
-        $user = User::find($id);
-        $following = Follow::where('user_id', $id)->get();
-        $follow_by = Follow::where('following_user_id', $id)->get();
+        $user = User::with('post')
+          ->withCount([
+            'follows' => function($query){ $query->where('is_check', 1); },
+            'follow_by' => function($query){ $query->where('is_check', 1); },
+          ])->find($id);
+
         $follows = Follow::with('user')->where('following_user_id', auth()->id())->where('is_check', 0)->get();
-        return view('profile', ['posts' => $posts, 'user' => $user, 'following' => $following, 'follow_by' => $follow_by, 'follows' => $follows]);
+        return view('profile', ['user' => $user, 'follows' => $follows]);
     }
 }

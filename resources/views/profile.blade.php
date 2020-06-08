@@ -6,13 +6,16 @@
         <div class="col-md-8">
             <div class="card">
                 @if(auth()->id() == $user->id)
-                  @forelse($follows as $follow)
-                    <div>
-                      <a href="/profile/{{$follow->user->id}}">{{$follow->user->name}}</a>
-                      想要追蹤你
+                  @if(count($follows) > 0)
+                    <div class="card-header">
+                        <a href="javascript:void(replyFollow())">有人想追蹤你</a>
                     </div>
-                  @empty
-                  @endforelse
+                    <div id="dialog_reply">
+                        <div id="reply_content">
+
+                        </div>
+                    </div>
+                  @endif
                 @endif
                 <div class="card-header">
                     <div>個人資料
@@ -88,9 +91,8 @@
     </div>
 </div>
 
-<div id="dialog_div">
-  <div id="content">
-123
+<div id="dialog_get">
+  <div id="get_content">
   </div>
 </div>
 <script>
@@ -102,16 +104,28 @@ $(function(){
         }
     });
 
-    $("#dialog_div").dialog({
+    $("#dialog_reply").dialog({
+        autoOpen: false,
+        draggable: false,
+        modal: true,
+        closeOnEscape:false,
+        open:function(event,ui){$('.ui-dialog-titlebar-close').hide();},
+        buttons: {
+          'close': function(){ $(this).dialog('close');}
+        }
+    });
+
+    $("#dialog_get").dialog({
       autoOpen:false,
       draggable: false,
       modal:true,
       closeOnEscape:false,
       open:function(event,ui){$('.ui-dialog-titlebar-close').hide();},
       buttons: {
-        'close': function(){ $(this).dialog('close')}
+        'close': function(){ $(this).dialog('close');}
       }
     });
+
     $('.follow_btn').click(function(){
       $.ajax({
           url: "{{route('follow', $user->id)}}",
@@ -137,7 +151,7 @@ function getFollow(value){
      if(value == -1){
        title = "粉絲";
      }
-     $('#dialog_div').dialog({title: title});
+     $('#dialog_get').dialog({title: title});
      $.ajaxSetup({
         'headers':{
              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -148,11 +162,53 @@ function getFollow(value){
         type: "POST",
         data: {value:value},
         success: function(data){
-            $('#content').html(data);
-            $('#dialog_div').dialog('open');
+            $('#get_content').html(data);
+            $('#dialog_get').dialog('open');
         },
       });
    });
+}
+
+function replyFollow(){
+    $(function(){
+      $.ajaxSetup({
+         'headers':{
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          }
+      });
+        $.ajax({
+            url: "{{route('replyFollow')}}",
+            type: "POST",
+            success: function(data){
+                var str = "<table style='width: 100%; background-color: #33d48c;'>";
+                for(var i = 0 ; i < data.length; i++){
+                  str += "<tr id='follow_" + data[i].user.id + "'" + "style='border: 1px solid lightblue'><td style='width: 50%; padding: 15px'>" + data[i].user.name + "</td><td><a href='javascript:void(allowFollow("+ data[i].user.id +"))' style='color: green'>V</a></td><td><a href='javascript:void(rejectFollow("+ data[i].user.id +"))' style='color: red'>X</a></td></tr>";
+                }
+                str += "</table>";
+                $('#reply_content').html(str);
+                $('#dialog_reply').dialog('open');
+            }
+        });
+    });
+}
+
+function allowFollow(user){
+    $(function(){
+        str = "你已經同意";
+        $.ajaxSetup({
+            'headers': {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            url: "{{route('allowFollow')}}",
+            type: "POST",
+            data: {user: user},
+            success: function(data){
+                $("#follow_"+user).html(str);
+            }
+        });
+    });
 }
 
 </script>

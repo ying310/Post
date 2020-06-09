@@ -25,4 +25,14 @@ class ProfileController extends Controller
         $follows = Follow::with('user')->where('following_user_id', auth()->id())->where('is_check', 0)->get();
         return view('profile', ['user' => $user, 'follows' => $follows]);
     }
+
+    public function search(Request $request){
+        $request->validate([
+            'search' => 'required'
+        ]);
+        $name = $request->input('search');
+        $name = "%". $name . "%";
+        $users = User::where('name', 'like', $name)->get();
+        return view('search', ['users' => $users]);
+    }
 }

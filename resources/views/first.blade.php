@@ -7,13 +7,17 @@
           @auth
             <div class="card">
               <div class="card-header">
-                <input type="text" name="search" autocomplete="off" style="border: 1px solid lightblue; border-radius: 20px;outline-style: none ;padding:5px 5px 5px 20px" placeholder="搜尋">
-                <a href="" style="font-size: 17px">搜尋</a>
+                <form action="{{route('search')}}" method="get">
+                  <input type="text" name="search" autocomplete="off" style="border: 1px solid lightblue; border-radius: 20px;outline-style: none ;padding:5px 5px 5px 20px" placeholder="搜尋">
+                  <input type="submit" name="submit" value="搜尋" style="border:none; border-radius: 10px; background-color: lightblue; color: white">
+                  @if($errors->first('search'))
+                    <div style="color: red">搜尋不能空白</div>
+                  @endif
+                </form>
               </div>
               <div>
                   <table style="width:100%">
                     <ul class='response'>
-
                     </ul>
                       <tr>
                         <td style="text-align:center; width:25%;padding: 10px">Title</td>

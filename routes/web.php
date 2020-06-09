@@ -24,3 +24,4 @@ Route::post('/getfollow/{id}', 'FollowController@getFollow')->name('getFollow');
 Route::post('replyFollow', 'FollowController@replyFollow')->name('replyFollow');
 Route::post('allowFollow', 'FollowController@allowFollow')->name('allowFollow');
 Route::post('rejectFollow', 'FollowController@rejectFollow')->name('rejectFollow');
+Route::get('search', 'FirstController@search')->name('search');

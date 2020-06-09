@@ -8,10 +8,11 @@ class Follow extends Model
 {
     protected $table = 'follows';
 
+    protected $primaryKey = 'user_id';
+
     protected $fillable = [
       'user_id',
       'following_user_id',
-      'is_check'
     ];
 
     public function user(){

@@ -211,6 +211,24 @@ function allowFollow(user){
     });
 }
 
+function rejectFollow(user){
+    $(function(){
+        str = "你已經拒絕";
+        $.ajaxSetup({
+            'headers': {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            url: "{{route('rejectFollow')}}",
+            type: "POST",
+            data: {user: user},
+            success: function(data){
+                $("#follow_"+user).html(str);
+            }
+        });
+    });
+}
 </script>
 
 @endsection

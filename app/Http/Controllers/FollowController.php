@@ -58,7 +58,17 @@ class FollowController extends Controller
         if($request->ajax()){
             $user_id = $request->input('user');
             $follow = Follow::where('user_id', $user_id)->where('following_user_id', auth()->id())->where('is_check', 0)->first();
-            $follow->is_check = "1";
+            $follow->is_check = 1;
+            $follow->save();
+            return $follow;
+        }
+    }
+
+    public function rejectFollow(Request $request){
+        if($request->ajax()){
+            $user_id = $request->input('user');
+            $follow = Follow::where('user_id', $user_id)->where('following_user_id', auth()->id())->where('is_check', 0)->first();
+            $follow->is_check = -1;
             $follow->save();
             return $follow;
         }

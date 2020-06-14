@@ -45,11 +45,17 @@
                       <div>
                           <h3><a href="/post/{{$post->id}}">{{$post->title}}</a></h3>
                       </div>
-
                       <br>
                       <div>
                           <p>{{$post->content}}</p>
                       </div>
+                      <div class="like_count{{$post->id}}">讚{{$post->like_count}}</div>
+                      <br>
+                      @if(count($post->like) == 0)
+                        <button class="like btn btn-warning" id="like_{{$post->id}}" value="0" data-post="{{$post->id}}">讚</button>
+                      @else
+                        <button class="like btn btn-success" id="like_{{$post->id}}" value="1" data-post="{{$post->id}}">讚</button>
+                      @endif
                     </div>
                     <br>
                     @empty
@@ -83,9 +89,10 @@ $(document).ready(function(){
             success: function(data){
                 $('.response').html('');
                 $('.response').append('<li style="color:red">Success</li>');
-                $('.card-body').prepend('<div style="border-bottom: 1px solid lightblue; margin: 10px; padding: 14px 16px"><div><h3>' + data.title + '</h3></div><br>' +
-                    '<div><p>' + data.content + '</p></div>'
-                );
+                // $('.card-body').prepend('<div style="border-bottom: 1px solid lightblue; margin: 10px; padding: 14px 16px"><div><h3>' + data.title + '</h3></div><br>' +
+                //     '<div><p>' + data.content + '</p></div>'
+                // );
+                getPost()
                 $('#create_title').val('');
                 $('#create_content').val('');
             },
@@ -100,6 +107,36 @@ $(document).ready(function(){
             }
         });
     });
+
+    $(".like").click(function(){
+        val = $(this).val();
+        post = $(this).data('post');
+        $.ajax({
+            url: "{{route('like')}}",
+            type: "POST",
+            data: { val: val, post: post },
+            success: function(data){
+                if(val == 0){
+                  $('#like_'+post).attr('class', 'like btn btn-success');
+                  $('#like_'+post).val(1);
+                }else if(val ==1){
+                  $('#like_'+post).attr('class', 'like btn btn-warning');
+                  $('#like_'+post).val(0);
+                }
+                $('.like_count'+post).html('讚'+data);
+            },
+        });
+    });
+
+    function getPost(){
+        $.ajax({
+            url: '/post',
+            type: "GET",
+            success: function(data){
+                $('.card-body').html(data);
+            }
+        });
+    }
 });
 </script>
 @endsection

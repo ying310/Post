@@ -17,14 +17,32 @@ class PostController extends Controller
         $this->middleware('auth');
     }
 
-    // public function index()
-    // {
-    //     $user = User::where('id', auth()->id())->first();
-    //     $follow = $user->follows->pluck('id');
-    //     $follow = $follow->push(auth()->id());
-    //     $posts = Post::whereIn('user_id', $follow)->latest()->get();
-    //     return view('post.index', ['posts' => $posts]);
-    // }
+    public function index(Request $request)
+    {
+        if($request->ajax()){
+            $user = User::find(auth()->id());
+            $follow = $user->follow->pluck('id');
+            $follow = $follow->push(auth()->id());
+            $posts = Post::withCount(['like' => function($query){ $query->where('type', 1); }])where('user_id', $follow)->get();
+            foreach($posts as $post){
+              echo '<div style="border-bottom: 1px solid lightblue; margin: 10px; padding: 14px 16px">
+                <div style="float:right">
+                    <h5><a href="/profile/'. $post->user_id . '">' . $post->user->name . '</a></h5>
+                </div>
+                <div>
+                    <h3><a href="/post/' . $post->id . '">' . $post->title . '</a></h3>
+                </div>
+                <br>
+                <div>
+                    <p>' . $post->content . '</p>
+                </div>
+                <div class="like_count' . $post->id . '">讚' . $post->like_count . '</div>
+                <br>
+              </div>';
+            }
+        }
+        return redirect('/');
+    }
 
     /**
      * Show the form for creating a new resource.

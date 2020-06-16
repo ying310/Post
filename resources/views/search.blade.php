@@ -7,10 +7,11 @@
             <div class="card">
               <div class="card-header">
                 <form action="{{route('search')}}" method="get">
-                  <input type="text" name="search" autocomplete="off" style="border: 1px solid lightblue; border-radius: 20px;outline-style: none ;padding:5px 5px 5px 20px" placeholder="搜尋">
+                  <input type="text" name="search" autocomplete="off" style="border: 1px solid lightblue; border-radius: 20px;outline-style: none ;padding:5px 5px 5px 20px; width:200px" placeholder="搜尋">
                   <input type="submit" name="submit" value="搜尋" style="border:none; border-radius: 10px; background-color: lightblue; color: white">
+                  <div id="nameList" style="position:relative;width:200px"></div>
                   @if($errors->first('search'))
-                    <div style="color: red">搜尋不能空白</div>
+                    <div style="color: red">{{$errors->first('search')}}</div>
                   @endif
                 </form>
               </div>
@@ -28,4 +29,37 @@
         </div>
     </div>
 </div>
+<script>
+$(function(){
+  $.ajaxSetup({
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+  });
+  $('input[name="search"]').blur(function(){
+      $('#nameList').fadeOut();
+  });
+  $('input[name="search"]').keyup(function(){
+      if($(this).val() != ''){
+         let search = $(this).val();
+         $.ajax({
+            url: "{{route('nameComplete')}}",
+            type: "POST",
+            data: {search : search},
+            success: function(data){
+                $('#nameList').html(data);
+                $('#nameList').fadeIn();
+            }
+         });
+      }else{
+          $('#nameList').fadeOut();
+      }
+  });
+
+  $(document).on('click', '.search_li', function(){
+      $('input[name="search"]').val($(this).text());
+      $('#nameList').fadeOut();
+  });
+  });
+</script>
 @endsection

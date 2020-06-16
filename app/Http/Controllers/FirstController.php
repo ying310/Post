@@ -22,16 +22,5 @@ class FirstController extends Controller
         }
     }
 
-    public function search(Request $request){
-        $request->validate(
-          ['search' => 'required']
-        );
-        $name = $request->input('search');
-        $user = User::where('name', $name)->first();
-        if($user == null){
-            return 'no';
-        }
-        $user_id = $user->id;
-        return redirect()->route('profile', $user_id);
-    }
+    
 }

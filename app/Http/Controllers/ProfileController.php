@@ -11,7 +11,7 @@ class ProfileController extends Controller
 {
 
     public function __construct(){
-        // $this->middleware('auth');
+        $this->middleware('auth');
     }
 
     public function index($id)
@@ -29,10 +29,29 @@ class ProfileController extends Controller
     public function search(Request $request){
         $request->validate([
             'search' => 'required'
+        ], [
+          'search.required' => '搜尋不能空白'
         ]);
         $name = $request->input('search');
         $name = "%". $name . "%";
         $users = User::where('name', 'like', $name)->get();
         return view('search', ['users' => $users]);
+    }
+
+    public function nameComplete(Request $request){
+        if($request->ajax()){
+            $search = $request->input('search');
+            $users = User::where('name', 'like', '%'.$search.'%')->take(10)->get();
+            if($users->isEmpty()){
+                $output = '沒有結果';
+            }else{
+                $output = '<ul class="dropdown-menu" style="width:100%;display:block;position:absolute;top:0;left:0">';
+                foreach($users as $user){
+                    $output .= '<li class="search_li"><a href="/profile/'.$user->id.'" style="display:block;">'.$user->name.'</li>';
+                }
+                $output .= '</ul>';
+            }
+            echo $output;
+        }
     }
 }

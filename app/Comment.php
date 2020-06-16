@@ -5,16 +5,16 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\User;
 
-class Like extends Model
+class Comment extends Model
 {
-    protected $table = "likes";
+    protected $table = 'comments';
 
-    protected $primarykey = "id";
+    protected $primarykey = 'id';
 
     protected $fillable = [
-        'user_id',
-        'post_id',
-        'type',
+      'user_id',
+      'post_id',
+      'content',
     ];
 
     public function user(){

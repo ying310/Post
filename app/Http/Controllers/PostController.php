@@ -20,28 +20,40 @@ class PostController extends Controller
     public function index(Request $request)
     {
         if($request->ajax()){
-            $user = User::find(auth()->id());
-            $follow = $user->follow->pluck('id');
+            $user = User::where('id', auth()->id())->first();
+            $follow = $user->follows->pluck('id');
             $follow = $follow->push(auth()->id());
-            $posts = Post::withCount(['like' => function($query){ $query->where('type', 1); }])where('user_id', $follow)->get();
+            $posts = Post::with(['user:id,name', 'like'=> function($query){ $query->where('user_id', auth()->id())->where('type', 1); }])
+            ->withCount(['like' => function($query){ $query->where('type', 1); }, 'comment'])
+            ->whereIn('user_id', $follow)->latest()->get();
             foreach($posts as $post){
               echo '<div style="border-bottom: 1px solid lightblue; margin: 10px; padding: 14px 16px">
                 <div style="float:right">
                     <h5><a href="/profile/'. $post->user_id . '">' . $post->user->name . '</a></h5>
                 </div>
                 <div>
-                    <h3><a href="/post/' . $post->id . '">' . $post->title . '</a></h3>
+                    <h2 style="padding:10px"><a href="/post/' . $post->id . '">' . $post->title . '</a></h2>
                 </div>
                 <br>
                 <div>
-                    <p>' . $post->content . '</p>
+                    <p style="font-size: 30px; padding:10px">' . $post->content . '</p>
                 </div>
-                <div class="like_count' . $post->id . '">讚' . $post->like_count . '</div>
-                <br>
-              </div>';
+                <div>
+                <span class="like_count' . $post->id . '">讚' . $post->like_count . '</span>
+                <span class="comment_count'.$post->id. '" style="margin-left: 10px">留言'.$post->comment_count. '</span>
+                <span style="float:right">'.$post->updated_at->diffForHumans().'</span>
+                </div>
+                <br>';
+                if(count($post->like) == 0){
+                  echo '<button class="like btn btn-warning" id="like_'.$post->id.'" value="0" data-post="'.$post->id.'">讚</button></div>';
+                }
+                else{
+                  echo '<button class="like btn btn-success" id="like_'.$post->id.'" value="1" data-post="'.$post->id.'">收回</button></div>';
+                }
             }
+        }else{
+            return redirect('/');
         }
-        return redirect('/');
     }
 
     /**
@@ -66,12 +78,16 @@ class PostController extends Controller
               $request->validate([
                 'title' => 'required|max:50',
                 'content' => 'required|max:255',
+              ],[
+                'title.required' => '標題必須要填寫',
+                'title.max' => '標題不能超過:max字',
+                'content.required' => '內容不能空白',
+                'content.max' => '內容不能超過:max字',
               ]);
               $input = $request->all();
               $user_id = auth()->id();
               $input['user_id'] = $user_id;
               $post = Post::create($input);
-              return $post;
           }
     }
 

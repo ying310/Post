@@ -18,6 +18,7 @@ class ProfilePolicy
      */
     public function viewAny(User $user ,User $model)
     {
+        //判斷有沒有追蹤
         if($user->id === $model->id){
           return true;
         }else{
@@ -38,6 +39,7 @@ class ProfilePolicy
      */
     public function view(User $user, User $model)
     {
+        //判斷是否是追蹤，但還沒同意
         if($user->id === $model->id){
           return true;
         }else{
